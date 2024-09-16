@@ -1,0 +1,48 @@
+Section 3: SELECT and INDEXes Statements
+
+*/
+
+
+/*
+
+CREATE INDEX STATEMENTS
+
+*/
+
+CREATE INDEX idx_student_name ON students(student_fname, student_lname);
+CREATE INDEX idx_course_name ON course(course_name);
+CREATE INDEX idx_staff_name ON staff(staff_fname, staff_lname);
+
+/*
+
+SELECT STATEMENTS
+
+*/
+
+SELECT 
+    CONCAT(st.staff_fname, ' ', st.staff_mname, ' ', st.staff_lname) AS "Staff Name",
+    d.department_name AS "Department",
+    st.staff_title AS "Title", 
+    r.role_name AS "Role",
+    r.role_academic AS "Academic Role",
+    r.head_position AS "Head Position",
+    de.degree_name AS "Degree",
+    l.language_name AS "Language"
+FROM staff st
+JOIN staff_role sr ON st.staff_id = sr.staff_id
+JOIN roles r ON sr.role_id = r.role_id
+JOIN department d ON st.department_id = d.department_id
+JOIN staff_languages sl ON st.staff_id = sl.staff_id
+JOIN languages l ON sl.language_id = l.language_id
+JOIN staff_degree sd ON st.staff_id = sd.staff_id
+JOIN degrees de ON sd.degree_id = de.degree_id; 
+
+
+SELECT
+    CONCAT(s.student_fname, ' ', s.student_mname, ' ', s.student_lname) AS "Student Name",
+    c.course_name AS "Course",
+    s.student_qualification AS "Qualification"
+FROM students s
+JOIN course c ON s.course_id = c.course_id;
+
+
