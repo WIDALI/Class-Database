@@ -1,0 +1,578 @@
+CREATE DATABASE class_database;
+
+/*
+
+Section 1: Create and Insert Statements for the Entities
+
+*/
+
+/*
+Roles Table Creation
+Roles Table Insert Statements
+
+*/
+
+CREATE TABLE roles (
+    role_id SERIAL PRIMARY KEY,
+    role_name VARCHAR(30) NOT NULL UNIQUE,
+    role_academic BOOLEAN NOT NULL,
+    head_position BOOLEAN NOT NULL
+
+);
+
+INSERT INTO roles 
+    (role_name, role_academic, head_position)
+VALUES
+    ('Lecturer', true, false),
+    ('Teaching Assistant', true, false),
+    ('Tutor', true, false),
+    ('Finance Admin', false, false),
+    ('HR Admin', false, false),
+    ('Head of Computing', true, true),
+    ('Head of Art', true, true),
+    ('Head of Humanities', true, true),
+    ('Head of Mathematics', true, true),
+    ('Head of HR', true, true),
+    ('Head of Finance', true, true);
+
+/*
+
+Departments Table Creation
+Departments Table Insert Statements
+
+*/
+
+CREATE TYPE departmentName AS ENUM ('Mathematics', 'Humanities', 'Art', 'Computing', 'HR', 'Finance');
+CREATE TABLE department (
+    department_id SERIAL PRIMARY KEY,
+    department_name departmentName NOT NULL,
+    department_academic BOOLEAN NOT NULL
+);
+
+INSERT INTO department 
+    (department_name, department_academic) 
+VALUES
+    ('Mathematics', true),
+    ('Humanities', true),
+    ('Art', true),
+    ('Computing', true),
+    ('HR', false),
+    ('Finance', false);
+
+/*
+
+Country Table Creation
+Country Table Insert Statements
+
+*/
+CREATE TABLE country (
+    country_id SERIAL PRIMARY KEY,
+    country_name VARCHAR(60) NOT NULL UNIQUE
+);
+
+INSERT INTO country
+    (country_name) 
+VALUES
+    ('Luxembourg'),
+    ('United Kingdom'),
+    ('France'),
+    ('China'),
+    ('Spain'),
+    ('Germany'),
+    ('United States'),
+    ('Canada'),
+    ('Mexico'),
+    ('New Zealand'),
+    ('United Arab Emirates');
+
+/*
+
+Languages Table Creation
+Languages Table Insert Statements
+
+*/
+
+CREATE TABLE languages (
+    language_id SERIAL PRIMARY KEY,
+    language_name VARCHAR(30) NOT NULL UNIQUE
+);
+
+INSERT INTO languages 
+    (language_name)
+VALUES
+    ('English'),
+    ('French'),
+    ('German'),
+    ('Spanish'),
+    ('Mandarin'),
+    ('Arabic');
+
+
+
+/*
+
+External Contacts Table Creation
+External Contacts Table Insert Statements
+
+*/
+
+CREATE TABLE external_contacts (
+    ext_contact_id SERIAL PRIMARY KEY,
+    ext_contact_fname VARCHAR(30) NOT NULL,
+    ext_contact_mname VARCHAR(30) NULL,
+    ext_contact_lname VARCHAR(30) NOT NULL,
+    ext_contact_email VARCHAR(100) NOT NULL UNIQUE,
+    ext_contact_mobile VARCHAR(15) NOT NULL UNIQUE,
+    ext_contact_landline VARCHAR(15) NULL,
+    ext_contact_add1 VARCHAR(75) NOT NULL,
+    ext_contact_add2 VARCHAR(75) NULL,
+    ext_contact_postcode VARCHAR(15) NOT NULL,
+    ext_contact_dob DATE CHECK (ext_contact_dob > '1900-01-01' AND ext_contact_dob < '2006-01-01') NOT NULL
+);
+
+INSERT INTO external_contacts 
+    (ext_contact_fname, ext_contact_mname, ext_contact_lname, ext_contact_email, ext_contact_mobile, ext_contact_landline, ext_contact_add1, ext_contact_add2, ext_contact_postcode, ext_contact_dob)
+VALUES
+    ('Calvin', null ,'Horton','nullam.ut@outlook.edu','363-6173', null ,'Cà Mau', null ,'64482','Sep 7, 1992'),
+    ('Ferdinand','Davis','Gould','congue@icloud.edu','1-669-785-7217','1-311-657-6361','Belfast','P.O. Box 505, 1016 Risus. Av.','88170-393','Feb 2, 2001'),
+    ('Amethyst','Dorian','Dawson','auctor.vitae@protonmail.org','305-8146','155-5274','Pachuca','Ap #584-7882 Magna Av.','261718','Jul 29, 1957'),
+    ('Lev','Brielle','Herring','purus@aol.ca','1-628-424-9708','150-5272','Wanganui','Ap #160-9022 Donec Ave','213685','Oct 26, 1944'),
+    ('Aspen','Karly','Terrell','risus.duis@protonmail.com','838-6427',null ,'Galway','Ap #171-8252 Vitae Road','732631','Nov 30, 1979'),
+    ('Kyra',null ,'Rollins','elit.dictum.eu@google.edu','453-2787','734-7487','Prince George', null ,'35213','Jan 11, 1965'),
+    ('Fallon','Todd','Velazquez','arcu.vestibulum@yahoo.net','1-778-423-2787','1-796-994-4229','Hanret','508-1449 Vitae Road','515763','May 27, 1996'),
+    ('Felix', null ,'Terrell','etiam.bibendum@hotmail.ca','1-228-366-8768','1-412-222-8288','MalŽves-Sainte-Marie-Wastines','903-9790 Sodales Avenue','17166-12999','Feb 25, 1955'),
+    ('Yolanda','Solomon','Mayer','mauris.suspendisse@icloud.ca','761-3768','1-268-676-1791','Warrnambool','304-4411 Nunc St.','41800','Sep 30, 1952'),
+    ('Karleigh','Urielle','Keller','sem@aol.couk','525-6767','1-933-628-3435','Manila','543-6684 Risus St.','28407','Dec 4, 1970');
+
+
+/*
+
+Courses Table Creation
+Courses Table Insert Statements
+
+*/
+
+CREATE TABLE course (
+    course_id SERIAL PRIMARY KEY,
+    department_id INT,
+    course_name VARCHAR(30) NOT NULL UNIQUE,
+    FOREIGN KEY (department_id) REFERENCES department(department_id)
+);
+
+INSERT INTO course 
+    (department_id, course_name)
+VALUES
+    (1, 'Calculus'),
+    (1, 'Trigonometry'),
+    (2, 'Interactive Media'),
+    (2, 'Computer Science'),
+    (3, 'Geography'),
+    (3, 'History'),
+    (4, 'Design'),
+    (4, 'Fine Art');
+
+/*
+
+Students Table Creation
+Students Table Insert Statements
+
+*/
+CREATE TYPE qualifications AS ENUM ('lvl 4', 'lvl 5', 'lvl 6');
+
+
+CREATE TABLE students (
+    student_id SERIAL PRIMARY KEY,
+    course_id INT,
+    country_id INT,
+    student_fname VARCHAR(30) NOT NULL,
+    student_mname VARCHAR(30) NULL,
+    student_lname VARCHAR(30) NOT NULL,
+    student_email VARCHAR(100) NOT NULL UNIQUE,
+    student_mobile VARCHAR(15) NOT NULL UNIQUE,
+    student_landline VARCHAR(15) NULL,
+    student_add1 VARCHAR(75) NOT NULL,
+    student_add2 VARCHAR(75) NULL,
+    student_postcode VARCHAR(15) NOT NULL,
+    student_grad_date DATE NULL,
+    student_qualification qualifications NOT NULL,
+    FOREIGN KEY (course_id) REFERENCES course(course_id),
+    FOREIGN KEY (country_id) REFERENCES country(country_id)
+);
+
+INSERT INTO students 
+    (course_id, country_id, student_fname, student_mname, student_lname, student_email, student_mobile, student_landline, student_add1, student_add2, student_postcode, student_grad_date, student_qualification) 
+VALUES
+  (7,4,'Xenos','Shad','Harper','in.mi@outlook.edu','610-3653','1-523-873-7533','Stalowa Wola','341-3096 Enim. St.','95-33','May 15, 2023', 'lvl 4'),
+  (5,5,'Drake', null ,'Payne','inger.tincidunt.aliquam@google.ca','753-9611',null,'Lochgilphead','302-1500 Auctor Rd.','8640','Mar 26, 2023', 'lvl 6'),
+  (6,2,'Jamalia','Orlando','Houston','nisi.mauris.nulla@aol.edu','1-556-947-5124','672-0018','Melilla','P.O. Box 417, 6775 Vitae St.','40809','Dec 6, 2024', 'lvl 5'),
+  (6,6,'Quinn','Miranda','Gonzalez','est.vitae@hotmail.couk','1-851-511-7711','1-330-996-6626','Ketchikan','Ap #701-7768 Facilisis, St.','7674 CM','Jul 20, 2024', 'lvl 4'),
+  (1,4,'Emi','Chantale','Parker','tincidunt.pede@hotmail.edu','1-815-267-1425','1-824-541-6712','Oaxaca','803-3327 Congue Road','247882','Jan 25, 2024', 'lvl 4'),
+  (5,5,'Jesse',null ,'Prince','cras.interdum@protonmail.edu','448-1892','562-9773','Laon','1627 Malesuada St.','7782-5642','Jun 29, 2024', 'lvl 4'),
+  (7,3,'Nita', null ,'Mejia','vestibulum.ante.ipsum@google.couk','361-1833','714-4389','Đồng Xoài','5632 In Rd.','81539-349','Dec 9, 2023', 'lvl 5'),
+  (4,3,'Xander','Teagan','Norman','tortor.garif@hotmail.com','552-3745','696-4678','Hà Nội',null,'596147','Jul 20, 2024', 'lvl 6'),
+  (2,6,'Cruz','Prescott','Blevins','at.sem@yahoo.couk','552-4421','840-9615','Qinghai','Ap #715-6819 Porttitor Road','6625','Mar 21, 2024', 'lvl 6'),
+  (5,4,'Akeem','Demetria','Murray','facilisis@outlook.edu','304-4404','251-2321','Nueva Imperial','491-6197 Neque Road','3501','Oct 22, 2023', 'lvl 5');
+  
+  
+
+
+/*
+
+Staff Table Creation
+Staff Table Insert Statements
+
+*/
+CREATE TYPE titles AS ENUM ('Mr', 'Mrs', 'Ms', 'Dr', 'Prof');
+
+CREATE TABLE staff (
+    staff_id SERIAL PRIMARY KEY,
+    country_id INT,
+    department_id INT,
+    staff_fname VARCHAR(30) NOT NULL,
+    staff_mname VARCHAR(30) NULL,
+    staff_lname VARCHAR(30) NOT NULL,
+    staff_email VARCHAR(100) NOT NULL UNIQUE,
+    staff_mobile VARCHAR(15) NOT NULL UNIQUE,
+    staff_landline VARCHAR(15) NULL,
+    staff_add1 VARCHAR(75) NOT NULL,
+    staff_add2 VARCHAR(75) NULL,
+    staff_postcode VARCHAR(15) NOT NULL,
+    staff_dob DATE NOT NULL CHECK(staff_dob > '1900-01-01' AND staff_dob < '2006-01-01'),
+    staff_title titles NOT NULL,
+    FOREIGN KEY (department_id) REFERENCES department(department_id),
+    FOREIGN KEY (country_id) REFERENCES country(country_id)
+);
+
+
+INSERT INTO staff 
+        (country_id, department_id, staff_fname, staff_mname, staff_lname, staff_email, staff_mobile, staff_landline, staff_add1, staff_add2, staff_postcode, staff_dob, staff_title)
+VALUES
+    (5,4,'Xavier','Jared','Morrison','ac@outlook.edu','1-523-468-4417', null ,'Girona','Ap #397-4613 Cursus St.','58244', 'Jan 10, 1978', 'Mr'),
+    (5,2,'Reagan','Shea','Ruiz','eu.enim.etiam@hotmail.net','663-9513','128-1114','Warszawa','Ap #335-7771 Sed St.','68833-62775', 'Oct 27, 1990', 'Mrs'),
+    (4,2,'Timothy', null ,'Klein','non@aol.edu','292-9035','806-7232','Białystok','P.O. Box 879, 5728 Tincidunt Street','96-43', 'Mar 19, 1982', 'Ms'),
+    (3,6,'Leandra','Eaton','Kent','vulputate.ullamcorper@protonmail.couk','221-2871','1-493-800-4234','Villahermosa','2800 Egestas. Rd.','12316', 'Dec 29, 1975', 'Dr'),
+    (2,4,'Xenos','Alexandra','Best','nec.malesuada@icloud.couk','448-6007',null ,'Macerata','9010 Congue, Av.','875586', 'Jun 16, 1989', 'Prof'),
+    (1,3,'Lee','Riley','Hines','nullam.nisl@google.com','1-274-956-5326','1-989-872-5162','Museum','Ap #720-1573 Congue. Avenue','57181', 'Jan 21, 1995', 'Mr'),
+    (4,5,'Kiona', null ,'Landry','purus.duis@yahoo.com','150-0505','1-916-749-8442','Serangoon', null ,'1611', 'May 23, 1973', 'Mrs'),
+    (5,1,'Christian', null ,'Navarro','luctus@outlook.couk','1-576-432-8581','524-7221','Baubau','Ap #778-9216 Nec Av.','34193', 'Apr 10, 1954', 'Ms'),
+    (5,6,'Slade','Callum','Banks','congue@outlook.couk','1-533-635-3176','1-365-402-9582','Mamuju','109-5607 Arcu Ave','81489', 'Aug 23, 1999', 'Dr'),
+    (5,4,'Mechelle','Hiram','Hill','arcu.sed@protonmail.couk','1-877-321-7367','363-3197','Höchst','P.O. Box 545, 1557 Turpis St.','L6M 7VT', 'Feb 16, 1970', 'Prof');
+
+/*
+
+Degree Table Creation
+Degree Table Insert Statements
+
+*/
+
+CREATE TABLE degrees (
+    degree_id SERIAL PRIMARY KEY,
+    degree_name VARCHAR(30) NOT NULL UNIQUE
+);
+
+INSERT INTO degrees 
+    (degree_name)
+VALUES
+    ('BSc Computer Science'),
+    ('BSc Mathematics'),
+    ('BSc Fine Art'),
+    ('BSc Geography'),
+    ('BSc History'),
+    ('MSc Computer Science'),
+    ('MSc Mathematics'),
+    ('MSc Geography'),
+    ('MSc History'),
+    ('MSc Interactive Media'),
+    ('MSc Fine Art'),
+    ('PhD Computer Science'),
+    ('PhD Mathematics'),
+    ('PhD Fine Art');
+
+/*
+
+Modules Table Creation
+Modules Table Insert Statements
+
+*/
+
+CREATE TABLE module (
+    module_id SERIAL PRIMARY KEY,
+    course_id INT,
+    module_name VARCHAR(50) NOT NULL UNIQUE,
+    FOREIGN KEY (course_id) REFERENCES course(course_id)
+);
+
+INSERT INTO module 
+    (course_id, module_name)
+VALUES
+    (1, 'Introduction to Limits and Continuity'),
+    (1, 'Derivatives and Their Applications'),
+    (1, 'Integrals and Techniques of Integration'),
+    (2, 'Basics of Trigonometric Functions'),
+    (2, 'Trigonometric Equations and Graphs'),
+    (2, 'Applications of Trigonometry'),
+    (3, 'Fundamentals of Interactive Design'),
+    (3, 'Multimedia and Interactive Elements'),
+    (3, 'User Testing and Feedback'),
+    (4, 'Introduction to Programming'),
+    (4, 'Data Structures and Algorithms'),
+    (4, 'Web Development'),
+    (5, 'Physical Geography'),
+    (5, 'Human Geography'),
+    (5, 'Geographic Information Systems (GIS)'),
+    (6, 'Ancient Civilizations'),
+    (6, 'Medieval and Renaissance Periods'),
+    (6, 'Modern World History'),
+    (7, 'Principles of Design'),
+    (7, 'Typography and Color'),
+    (7, 'Layout and Composition'),
+    (8, 'Fundamentals of Drawing and Sketching'),
+    (8, 'Painting Techniques and Styles'),
+    (8, 'Sculpture and 3D Artistry');
+
+/*
+
+Session Table Creation
+Session Table Insert Statements
+
+*/
+
+CREATE TABLE session (
+    session_id SERIAL PRIMARY KEY,
+    module_id INT,
+    session_start TIMESTAMP NOT NULL,
+    session_end TIMESTAMP NOT NULL,
+    FOREIGN KEY (module_id) REFERENCES module(module_id)
+);
+
+INSERT INTO session 
+    (module_id, session_start, session_end)
+VALUES
+    (1, '2023-10-17 09:00:00', '2023-10-17 11:00:00'),
+    (3, '2023-10-18 07:00:00', '2023-10-18 08:00:00'),
+    (21, '2023-10-17 13:00:00', '2023-10-17 15:00:00'),
+    (12, '2023-10-18 14:00:00', '2023-10-18 15:00:00'),
+    (13, '2023-10-17 11:00:00', '2023-10-17 12:00:00'),
+    (3, '2023-10-18 08:00:00', '2023-10-18 10:00:00'),
+    (19, '2023-10-17 13:00:00', '2023-10-17 15:00:00'),
+    (7, '2023-10-18 12:00:00', '2023-10-18 13:00:00'),
+    (8, '2023-10-17 09:00:00', '2023-10-17 11:00:00'),
+    (3, '2023-10-18 09:00:00', '2023-10-18 10:00:00'),
+    (9, '2023-10-17 13:00:00', '2023-10-17 14:00:00'),
+    (22, '2023-10-18 16:00:00', '2023-10-18 17:00:00');
+
+/*
+
+Section 2: Create and Insert Intersection Table Statements
+
+*/
+
+/*
+
+Student Contact Table Creation
+Student Contact Table Insert Statements
+
+*/
+
+CREATE TABLE student_contact (
+    student_id INT REFERENCES students(student_id),
+    ext_contact_id INT REFERENCES external_contacts(ext_contact_id),
+    PRIMARY KEY (student_id, ext_contact_id)
+);
+
+INSERT INTO student_contact 
+    (student_id, ext_contact_id)
+VALUES
+    (1, 1),
+    (2, 2),
+    (3, 3),
+    (4, 4),
+    (5, 5),
+    (6, 6),
+    (7, 7),
+    (8, 8);
+
+/*
+
+Student Languages Table Creation
+Student Languages Table Insert Statements
+
+*/
+
+CREATE TABLE student_languages (
+    student_id INT REFERENCES students(student_id),
+    language_id INT REFERENCES languages(language_id),
+    PRIMARY KEY (student_id, language_id)
+);
+
+INSERT INTO student_languages 
+    (student_id, language_id)
+VALUES
+    (1, 1),
+    (2, 2),
+    (3, 3),
+    (4, 4),
+    (5, 5),
+    (6, 1),
+    (7, 2),
+    (8, 3);
+
+/*
+
+Staff Languages Table Creation
+Staff Languages Table Insert Statements
+
+*/
+
+CREATE TABLE staff_languages (
+    staff_id INT REFERENCES staff(staff_id),
+    language_id INT REFERENCES languages(language_id),
+    PRIMARY KEY (staff_id, language_id)
+);
+
+INSERT INTO staff_languages 
+    (staff_id, language_id)
+VALUES
+    (1, 1),
+    (2, 2),
+    (3, 3),
+    (4, 4),
+    (5, 5),
+    (6, 1),
+    (7, 2),
+    (8, 3),
+    (9, 4),
+    (10, 5);
+
+/*
+
+Course Module Table Creation
+Course Module Table Insert Statements
+
+*/
+
+CREATE TABLE course_module (
+    course_id INT REFERENCES course(course_id),
+    module_id INT REFERENCES module(module_id),
+    PRIMARY KEY (course_id, module_id)
+);
+
+INSERT INTO course_module 
+    (course_id, module_id)
+VALUES
+    (1, 1),
+    (1, 2),
+    (2, 3),
+    (2, 4),
+    (3, 5),
+    (3, 6),
+    (4, 7),
+    (4, 8);
+
+
+/*
+
+Staff Role Table Creation
+Staff Role Table Insert Statements
+
+*/
+
+
+CREATE TABLE staff_role (
+    staff_id INT REFERENCES staff(staff_id),
+    role_id INT REFERENCES roles(role_id),
+    PRIMARY KEY (staff_id, role_id)
+);
+
+INSERT INTO staff_role 
+    (staff_id, role_id)
+VALUES
+    (1, 1),
+    (2, 2),
+    (3, 3),
+    (4, 4),
+    (5, 5),
+    (6, 1),
+    (7, 2),
+    (8, 3),
+    (9, 4),
+    (10, 5);
+
+/*
+
+Staff Session Table Creation
+Staff Session Table Insert Statements
+
+*/
+
+
+CREATE TABLE staff_session (
+    staff_id INT REFERENCES staff(staff_id),
+    session_id INT REFERENCES session(session_id),
+    PRIMARY KEY (staff_id, session_id)
+);
+
+INSERT INTO staff_session 
+    (staff_id, session_id)
+VALUES
+    (1, 1),
+    (2, 2),
+    (3, 3),
+    (4, 4),
+    (5, 5),
+    (6, 6),
+    (7, 7),
+    (8, 8);
+
+/*
+
+Student Session Table Creation
+Student Session table Insert Statements
+
+*/
+
+CREATE TABLE students_session (
+    student_id INT REFERENCES students(student_id),
+    session_id INT REFERENCES session(session_id),
+    PRIMARY KEY (student_id, session_id)
+);
+
+INSERT INTO students_session
+    (student_id, session_id)
+VALUES
+    (1, 1),
+    (1, 2),
+    (2, 3),
+    (3, 4),
+    (4, 5),
+    (5, 6),
+    (6, 7),
+    (7, 8);
+
+/*
+
+Staff Degree Table Creation
+Staff Degree Table Insert Statements
+
+*/
+
+CREATE TABLE staff_degree (
+    degree_id INT REFERENCES degrees(degree_id),
+    staff_id INT REFERENCES staff(staff_id)
+);
+
+INSERT INTO staff_degree
+    (degree_id, staff_id)
+VALUES
+    (1, 1),
+    (1, 2),
+    (6, 4),
+    (5, 6),
+    (4, 7),
+    (3, 8),
+    (2, 9),
+    (1, 10);
+
+
+/*
+
